@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IV Innovations | BMI Tracker & User Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast" class="toast-notification">
+        <span id="toast-icon"></span>
+        <span id="toast-message">Notification message</span>
+    </div>
+
+    <!-- ==================== 1. AUTHENTICATION MODULE ==================== -->
+    <main id="auth-screen" class="auth-wrapper">
+        <div class="auth-card glass-container">
+            <div class="auth-header">
+                <div class="logo-icon">IV</div>
+                <h1 id="auth-title">Welcome Back</h1>
+                <p id="auth-subtitle">Monitor and manage your fitness journey</p>
+            </div>
+
+            <!-- Tabs for switching between Login & Signup -->
+            <div class="auth-tabs" id="auth-tabs-nav">
+                <button type="button" class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="tab-signup" onclick="switchAuthTab('signup')">Register</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" onsubmit="handleEmailLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M22 6l-10 7L2 6"></path></svg>
+                        </span>
+                        <input type="email" id="login-email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="error-message" id="login-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </span>
+                        <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <div class="error-message" id="login-password-error"></div>
+                </div>
+
+                <div class="form-footer">
+                    <div></div>
+                    <button type="button" class="forgot-btn" onclick="showForgotPassword()">Forgot Password?</button>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-login-submit">
+                    <span>Sign In</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </button>
+            </form>
+
+            <!-- REGISTER FORM (Hidden by default) -->
+            <form id="signup-form" class="hidden" onsubmit="handleEmailRegister(event)">
+                <div class="form-group">
+                    <label class="form-label" for="signup-name">Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
+                        <input type="text" id="signup-name" class="form-input" placeholder="John Doe" required>
+                    </div>
+                    <div class="error-message" id="signup-name-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signup-email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M22 6l-10 7L2 6"></path></svg>
+                        </span>
+                        <input type="email" id="signup-email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="error-message" id="signup-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signup-password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </span>
+                        <input type="password" id="signup-password" class="form-input" placeholder="Min. 8 characters" required>
+                    </div>
+                    <div class="error-message" id="signup-password-error"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-signup-submit">
+                    <span>Create Account</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </button>
+            </form>
+
+            <!-- FORGOT PASSWORD FORM (Hidden by default) -->
+            <form id="forgot-form" class="hidden" onsubmit="handleForgotPasswordSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="forgot-email">Recovery Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M22 6l-10 7L2 6"></path></svg>
+                        </span>
+                        <input type="email" id="forgot-email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="error-message" id="forgot-email-error"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-bottom: 12px;">
+                    <span>Send Reset Instructions</span>
+                </button>
+
+                <button type="button" class="btn-secondary" style="width: 100%;" onclick="hideForgotPassword()">
+                    Back to Sign In
+                </button>
+            </form>
+
+            <div id="auth-social-login">
+                <div class="divider">Or Continue With</div>
+                <button type="button" class="btn-google" onclick="handleGoogleLogin()">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.6 15.05 1 12 1 7.24 1 3.2 3.73 1.25 7.7l3.85 2.99C6.01 7.26 8.78 5.04 12 5.04z"></path>
+                        <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.44h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.39-4.88 3.39-8.49z"></path>
+                        <path fill="#FBBC05" d="M5.1 10.69c-.25-.75-.39-1.55-.39-2.38s.14-1.63.39-2.38L1.25 6.94C.45 8.55 0 10.35 0 12.27s.45 3.72 1.25 5.33l3.85-2.99c-.25-.75-.39-1.55-.39-2.38s.14-1.63.39-2.38z"></path>
+                        <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.66-2.84c-1.01.68-2.31 1.09-3.95 1.09-3.22 0-5.99-2.22-6.9-5.65l-3.85 2.99C3.2 19.8 7.24 23 12 23z"></path>
+                    </svg>
+                    <span>Sign in with Google</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== 2. APPLICATION DASHBOARD SCREEN ==================== -->
+    <div id="dashboard-screen" class="dashboard-wrapper hidden">
+        
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="logo-icon" style="width: 38px; height: 38px; font-size: 18px; margin: 0; border-radius: 10px;">IV</div>
+                <h2 style="font-size: 18px; font-family: var(--font-heading);">Innovations BMI</h2>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <!-- Theme Toggle Button -->
+                <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark/light theme">
+                    <span id="theme-toggle-icon">
+                        <!-- Dark icon default -->
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"></path></svg>
+                    </span>
+                </button>
+
+                <!-- Active Profile Info Quick Switcher -->
+                <div class="user-quick-info" onclick="openProfileSettingsModal()">
+                    <div id="current-quick-avatar" class="user-quick-avatar">U</div>
+                    <span id="current-quick-name" class="user-quick-name">Loading...</span>
+                </div>
+
+                <!-- Main Logout Button -->
+                <button type="button" class="logout-btn" onclick="handleLogout()" title="Log out">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Sidebar: Multi-user profiles -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Profiles</h3>
+            
+            <!-- Dynamic profile container switcher -->
+            <div class="profile-list-container" id="profiles-list">
+                <!-- Dynamically loaded profile items go here -->
+            </div>
+
+            <button type="button" class="btn-add-profile" onclick="openAddProfileModal()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Add Profile</span>
+            </button>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <div class="dashboard-grid">
+                
+                <!-- Left Grid: Details Form and Settings -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- BMI CALCULATOR & DETAIL EDIT CARD -->
+                    <section class="card glass-container">
+                        <div class="card-title">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            <h3>User Details & Calculator</h3>
+                        </div>
+
+                        <!-- Form units select KGS/LBS and CM/Inches -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div class="unit-toggle-group">
+                                <div>
+                                    <span class="toggle-label">Weight Unit</span>
+                                    <div class="toggle-pill-wrapper">
+                                        <button type="button" class="toggle-pill-btn active" id="unit-w-kg" onclick="changeUnits('weight', 'kg')">KGS</button>
+                                        <button type="button" class="toggle-pill-btn" id="unit-w-lb" onclick="changeUnits('weight', 'lb')">LBS</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="unit-toggle-group">
+                                <div>
+                                    <span class="toggle-label">Height Unit</span>
+                                    <div class="toggle-pill-wrapper">
+                                        <button type="button" class="toggle-pill-btn active" id="unit-h-cm" onclick="changeUnits('height', 'cm')">CM</button>
+                                        <button type="button" class="toggle-pill-btn" id="unit-h-in" onclick="changeUnits('height', 'in')">Inches</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Range slider for height -->
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <label class="form-label" for="slider-height">Height</label>
+                                <div class="slider-val-box">
+                                    <span class="slider-value" id="height-val">170</span>
+                                    <span class="slider-unit" id="height-unit-label">cm</span>
+                                </div>
+                            </div>
+                            <input type="range" id="slider-height" class="range-slider" min="100" max="220" value="170" step="1" oninput="updateCalculatorInputs()">
+                        </div>
+
+                        <!-- Range slider for weight -->
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <label class="form-label" for="slider-weight">Weight</label>
+                                <div class="slider-val-box">
+                                    <span class="slider-value" id="weight-val">70</span>
+                                    <span class="slider-unit" id="weight-unit-label">kg</span>
+                                </div>
+                            </div>
+                            <input type="range" id="slider-weight" class="range-slider" min="30" max="150" value="70" step="1" oninput="updateCalculatorInputs()">
+                        </div>
+
+                        <!-- Gender display & toggle -->
+                        <div>
+                            <span class="toggle-label">Gender</span>
+                            <div class="gender-selector">
+                                <button type="button" class="gender-btn active" id="gender-male" onclick="changeGender('Male')">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="10" cy="10" r="4"></circle><path d="M14 6l6-6M20 0h-4M20 0v4"></path></svg>
+                                    <span>Male</span>
+                                </button>
+                                <button type="button" class="gender-btn" id="gender-female" onclick="changeGender('Female')">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"></circle><path d="M12 13v7M9 16h6"></path></svg>
+                                    <span>Female</span>
+                                </button>
+                                <button type="button" class="gender-btn" id="gender-other" onclick="changeGender('Other')">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                    <span>Other</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons to submit/persist detailed edits -->
+                        <div style="display: flex; gap: 12px; margin-top: 8px;">
+                            <button type="button" class="btn-primary" onclick="saveProfileMetrics()" style="flex: 1;">
+                                <span>Save Changes</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- WEIGHT HISTORY LOGGING CARD -->
+                    <section class="card glass-container">
+                        <div class="card-title">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
+                            <h3>Weight History & Log</h3>
+                        </div>
+
+                        <!-- Manual weight log entry -->
+                        <form class="weight-log-form" onsubmit="handleAddWeightLog(event)">
+                            <div class="form-group">
+                                <label class="form-label" for="log-weight-input">Log Weight</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon" id="log-weight-icon-unit">kg</span>
+                                    <input type="number" id="log-weight-input" class="form-input" placeholder="70" step="0.1" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex: 1.2;">
+                                <label class="form-label" for="log-date-input">Date</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    </span>
+                                    <input type="date" id="log-date-input" class="form-input" style="padding-left: 36px;" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-add-log">Add Entry</button>
+                        </form>
+
+                        <!-- Historical readings lists -->
+                        <div>
+                            <div class="logs-list-header">
+                                <span class="logs-list-title">Recent Logs</span>
+                            </div>
+                            <div class="logs-scroll-area" id="weight-logs-list" style="margin-top: 10px;">
+                                <!-- Dynamic logs items go here -->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Grid: Live BMI Status and Weight Graph -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- BMI STATUS DISPLAY -->
+                    <section class="result-card glass-container">
+                        <div class="bmi-badge-pulse" id="bmi-glow"></div>
+                        <h3 class="toggle-label" style="margin-bottom: 4px;">Active Profile BMI</h3>
+                        <div class="result-val-display" id="bmi-display-value">0.0</div>
+                        <span class="result-status-pill status-normal" id="bmi-display-status">Normal</span>
+                        
+                        <!-- Visual scale indicator meter -->
+                        <div class="bmi-meter-bg">
+                            <div class="bmi-meter-pointer" id="bmi-indicator" style="left: 50%;"></div>
+                        </div>
+                        
+                        <div class="bmi-scale-labels">
+                            <span>Under (18.5)</span>
+                            <span>Normal (25)</span>
+                            <span>Over (30)</span>
+                            <span>Obese</span>
+                        </div>
+                        
+                        <!-- Advice text card description -->
+                        <div style="margin-top: 24px; text-align: left; width: 100%;">
+                            <h4 style="font-size: 14px; margin-bottom: 6px;">Recommendation</h4>
+                            <p class="bmi-advice-text" id="bmi-display-advice">Keep exercising and tracking your details regularly to remain fit.</p>
+                        </div>
+                    </section>
+
+                    <!-- WEIGHT OVER PAST WEEK GRAPH -->
+                    <section class="card glass-container">
+                        <div class="card-title">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 17l6-6 4 4 8-8M22 21H2V3"></path></svg>
+                            <h3>Weight trend (Past Week)</h3>
+                        </div>
+                        
+                        <!-- Graph Canvas -->
+                        <div class="chart-container">
+                            <canvas id="weightHistoryChart"></canvas>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== 3. MODAL POPUPS ==================== -->
+    
+    <!-- ADD PROFILE MODAL -->
+    <div class="modal-overlay" id="add-profile-modal">
+        <div class="modal-card glass-container">
+            <div class="modal-header">
+                <h3>Create New Profile</h3>
+                <button type="button" class="modal-close-btn" onclick="closeAddProfileModal()">&times;</button>
+            </div>
+            <form onsubmit="handleAddProfileSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="new-profile-name">Profile Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
+                        <input type="text" id="new-profile-name" class="form-input" placeholder="e.g. Family member, Self" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="new-profile-age">Age (Years)</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                        </span>
+                        <input type="number" id="new-profile-age" class="form-input" placeholder="25" min="1" max="120" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label" for="new-profile-height">Height (CM)</label>
+                        <input type="number" id="new-profile-height" class="form-input" style="padding-left: 14px;" placeholder="170" min="50" max="250" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="new-profile-weight">Weight (KG)</label>
+                        <input type="number" id="new-profile-weight" class="form-input" style="padding-left: 14px;" placeholder="70" min="10" max="300" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="new-profile-gender">Gender</label>
+                    <div class="input-wrapper">
+                        <select id="new-profile-gender" class="form-input" style="padding-left: 14px; appearance: menulist;" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeAddProfileModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCRIPT -->
+    <script src="app.js"></script>
+</body>
+</html>
