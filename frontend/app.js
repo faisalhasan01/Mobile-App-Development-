@@ -1,7 +1,9 @@
 // ==================== CONFIGURATION & STATE ====================
 
 // Automatically determine backend port
-const API_BASE_URL = window.location.port === '8080' ? 'http://localhost:5000' : window.location.origin;
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+    ? window.location.origin 
+    : 'http://localhost:8080';
 
 // Local storage session keys
 const DB_SESSION_EMAIL_KEY = 'bmi_api_session_email';
